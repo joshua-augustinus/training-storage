@@ -12,7 +12,9 @@ export const storeString = async (key: string, value: string) => {
 
 export const storeData = async (key: string, value: any) => {
     try {
-        await AsyncStorage.setItem(key, value)
+        const storedValue = JSON.stringify(value);
+
+        await AsyncStorage.setItem(key, storedValue)
     } catch (e) {
         // saving error
         Alert.alert("Failed to save in storage");
@@ -22,7 +24,12 @@ export const storeData = async (key: string, value: any) => {
 export const getData = async (key: string) => {
     try {
         const value = await AsyncStorage.getItem(key)
-        return value; //Will be null if not previously saved
+        if (value) {
+            const item = JSON.parse(value);
+            return item;
+        } else {
+            return null;
+        }
     } catch (e) {
         // error reading value
         Alert.alert("Failed to access storage");

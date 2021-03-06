@@ -1,11 +1,12 @@
 import { ImageInfo } from "@src/types/sharedElementTypes"
 import { Platform } from "react-native";
 import RNFetchBlob from 'rn-fetch-blob'
+import { getData, storeData } from "./StorageService";
 
 /**
  * Singleton
  */
-const localImages = {};
+let localImages = {};
 
 /**
  * Gets image if cached. 
@@ -97,6 +98,20 @@ export const preloadImage = (images: ImageInfo, callback?) => {
             if (callback) {
                 callback(source);
             }
+
+            saveImageKeysToStorage();
         })
 }
 
+const STORAGE_KEY = 'IMAGES';
+export const saveImageKeysToStorage = () => {
+    storeData(STORAGE_KEY, localImages);
+}
+
+export const loadImageKeysFromStorage = async () => {
+    const result = await getData(STORAGE_KEY);
+    console.log("Keys loaded", result);
+    if (result)
+        localImages = result;
+    return result;
+}
