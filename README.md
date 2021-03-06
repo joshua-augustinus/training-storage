@@ -1,26 +1,26 @@
-# react-native-templates
-Used for the purposes of training HelloDriven developers
+# rn fetch blob bug
 
-# How to use
-In GitHub click the green Use Template button
-
-After cloning this repo you can run the app as follows:
+Instructions:
 ```
 yarn
-npx pod-install
+yarn android
 ```
-Then
+
+This will load up the app, download an image then save the filepath in storage
+Next load it up again and this time it will see the filepath in storage and use that one:
 ```
 yarn android
 ```
-or
+
+
+If we test again on IOS 
 ```
+npx pod-install
 yarn ios
 ```
 
-# Template Description
-- react native 0.63
-- react navigation v4
-- vector icons installed
-- Typescript
-
+This should load up the app, download the image and save the filepath in storage.
+However, when we boot up the app again the image is not found
+```
+yarn ios
+```
