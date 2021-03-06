@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Text, TextInput, TouchableOpacity, View, BackHandler, Image } from 'react-native';
+import { Button, Text, TextInput, TouchableOpacity, View, BackHandler, Image, Alert } from 'react-native';
 import { SafeAreaView, StackActions } from 'react-navigation';
 import { DrawerActions, NavigationDrawerProp } from 'react-navigation-drawer';
-import { FeatureButton } from '@src/components/FeatureButton';
-import { getImageByInfo, getImageIfCached } from '@src/services/LocalImageService';
+import { getImageByInfo, getImageIfCached, loadImageKeysFromStorage } from '@src/services/LocalImageService';
+import { ImageContainer } from '@src/components/ImageContainer';
 
 /**
  * https://reactnavigation.org/docs/4.x/typescript
@@ -12,37 +12,40 @@ type Props = {
     navigation: NavigationDrawerProp<{ userId: string, routeName: string }>;
 }
 
-const IMAGE_INFO = {
-    id: 1,
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_Images_2015_logo.svg/220px-Google_Images_2015_logo.svg.png'
-}
 
 const MasterScreen = (props: Props) => {
-    const [imageSource, setImageSource] = useState(getImageIfCached(IMAGE_INFO));
-
+    const [isStorageLoaded, setIsStorageloaded] = useState(false)
 
     useEffect(() => {
-        if (!imageSource) {
-            getImageByInfo(IMAGE_INFO, setImageSource);
-        }
+        setup();
     }, []);
 
+    const setup = async () => {
+        const result = await loadImageKeysFromStorage();
+        if (result) {
+            Alert.alert("Images were loaded from storage");
+        } else {
+            Alert.alert("No image keys in storage");
+        }
+
+        setIsStorageloaded(true);
+    }
 
 
+    if (isStorageLoaded) {
+        return (
+            <SafeAreaView style={{ flex: 1 }}>
+                <ImageContainer />
+            </SafeAreaView>
 
-    return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ height: 50, backgroundColor: 'red', flexDirection: 'row', alignItems: 'center' }}>
+        );
+    } else {
+        return (
+            <Text>Loading from storage...</Text>
+        )
+    }
 
-            </View>
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>Placeholder</Text>
-                <Image style={{ width: 200, height: 50 }}
-                    source={imageSource} resizeMode={'cover'} />
-            </View>
-        </SafeAreaView>
 
-    );
 
 }
 
